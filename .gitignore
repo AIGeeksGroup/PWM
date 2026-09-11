@@ -1,0 +1,15 @@
+third_party/
+weights/
+data/
+prepared/
+outputs/
+.venv/
+__pycache__/
+*.py[cod]
+.env
+*.log
+*.pt
+*.pth
+*.safetensors
+*.h5
+*.mp4
