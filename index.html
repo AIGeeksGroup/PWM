@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="PWM: Personalized World Models with Online Reinforcement Learning">
+  <title>PWM: Personalized World Models with Online Reinforcement Learning</title>
+  <style>
+    :root {
+      --purple: #7544a8;
+      --purple-dark: #4b2674;
+      --purple-soft: #f4effa;
+      --purple-wash: #fbf9fd;
+      --ink: #241d2d;
+      --muted: #756b80;
+      --line: #e2d9eb;
+      --page: #fcfbfe;
+      --max-width: 1220px;
+      --shadow: 0 14px 34px rgba(75, 38, 116, .08);
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      min-width: 320px;
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(117, 68, 168, .08), transparent 420px),
+        var(--page);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    a { color: inherit; }
+
+    .shell {
+      width: min(var(--max-width), calc(100% - 56px));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid var(--line);
+      background: rgba(252, 251, 254, .88);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 2px 18px rgba(75, 38, 116, .04);
+    }
+
+    .topbar-inner {
+      display: flex;
+      min-height: 70px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .wordmark {
+      color: var(--purple);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .78rem;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .68rem;
+      font-weight: 800;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      transition: color 160ms ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible { color: var(--purple); }
+
+    .hero {
+      padding: clamp(78px, 10vw, 124px) 0 clamp(70px, 8vw, 102px);
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 0 0 25px;
+      color: var(--purple);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .7rem;
+      font-weight: 850;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+    }
+
+    .eyebrow::before {
+      width: 34px;
+      height: 3px;
+      content: "";
+      background: var(--purple);
+    }
+
+    h1 {
+      max-width: 1060px;
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(2.35rem, 6vw, 5.8rem);
+      font-weight: 850;
+      letter-spacing: -.06em;
+      line-height: .98;
+    }
+
+    .title-accent { color: var(--purple); }
+
+    .hero-rule {
+      width: min(100%, 710px);
+      height: 1px;
+      margin-top: 36px;
+      background: var(--line);
+    }
+
+    .hero-summary {
+      max-width: 650px;
+      margin: 24px 0 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      line-height: 1.58;
+    }
+
+    main { border-top: 1px solid var(--line); }
+
+    .comparison-section { padding: clamp(64px, 8vw, 96px) 0 126px; }
+
+    .section-heading {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 46px;
+    }
+
+    h2 {
+      margin: 0;
+      color: var(--purple-dark);
+      font-size: clamp(2.2rem, 4.5vw, 4.5rem);
+      font-weight: 850;
+      letter-spacing: -.065em;
+      line-height: 1;
+    }
+
+    .section-note {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .67rem;
+      font-weight: 800;
+      letter-spacing: .1em;
+      text-align: right;
+      text-transform: uppercase;
+    }
+
+    .subset-section {
+      margin-top: 68px;
+      padding-top: 26px;
+      border-top: 1px solid var(--line);
+    }
+
+    .subset-section:first-of-type { margin-top: 0; }
+
+    .subset-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .subset-kicker {
+      margin: 0 0 8px;
+      color: var(--purple);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .64rem;
+      font-weight: 850;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(1.75rem, 3vw, 2.7rem);
+      font-weight: 800;
+      letter-spacing: -.045em;
+      line-height: 1;
+    }
+
+    .subset-count {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .66rem;
+      font-weight: 800;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+    }
+
+    .rollout-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .bench-section {
+      padding: 86px 0 128px;
+      border-top: 1px solid var(--line);
+      background: linear-gradient(180deg, rgba(117, 68, 168, .045), transparent 540px);
+    }
+
+    .bench-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 20px 16px;
+      align-items: start;
+    }
+
+    .bench-row-label {
+      grid-column: 1 / -1;
+      margin-top: 20px;
+      padding: 0 4px 9px;
+      border-bottom: 1px solid rgba(117, 68, 168, .42);
+      color: var(--purple-dark);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .9rem;
+      font-weight: 900;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+    }
+
+    .bench-row-label:first-child {
+      margin-top: 0;
+    }
+
+    .bench-grid .rollout-card {
+      display: flex;
+      min-width: 0;
+      flex-direction: column;
+    }
+
+    .bench-grid .rollout-video {
+      aspect-ratio: 832 / 480;
+      object-fit: cover;
+    }
+
+    .bench-grid .rollout-caption {
+      flex: 1;
+      padding: 14px 16px 17px;
+    }
+
+    .bench-grid .rollout-caption-head {
+      display: block;
+    }
+
+    .bench-grid .rollout-scene {
+      display: block;
+      margin-top: 5px;
+    }
+
+    .rollout-card {
+      overflow: hidden;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: 0 2px 0 rgba(75, 38, 116, .025);
+      transition: border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .rollout-card:hover {
+      border-color: rgba(117, 68, 168, .56);
+      box-shadow: var(--shadow);
+      transform: translateY(-2px);
+    }
+
+    .rollout-video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 3328 / 520;
+      background: #160f1d;
+      object-fit: contain;
+    }
+
+    .rollout-caption {
+      padding: 17px 22px 20px;
+      background: linear-gradient(180deg, #f7f2fb, var(--purple-soft));
+    }
+
+    .rollout-caption-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      padding-bottom: 11px;
+      border-bottom: 1px solid rgba(117, 68, 168, .16);
+    }
+
+    .rollout-label {
+      color: var(--purple-dark);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .63rem;
+      font-weight: 900;
+      letter-spacing: .11em;
+      text-transform: uppercase;
+    }
+
+    .rollout-scene {
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .63rem;
+      letter-spacing: .04em;
+    }
+
+    .caption-text {
+      margin: 14px 0 0;
+      color: var(--ink);
+      font-size: .98rem;
+      line-height: 1.6;
+    }
+
+    footer {
+      padding: 26px 0 42px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: .65rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 700px) {
+      .shell { width: min(var(--max-width), calc(100% - 32px)); }
+      .topbar-inner { min-height: 60px; gap: 12px; }
+      .wordmark { flex-shrink: 0; }
+      .nav-links { min-width: 0; gap: 12px; font-size: .6rem; }
+      .hero { padding: 72px 0 68px; }
+      h1 { max-width: 100%; font-size: clamp(2.15rem, 9.3vw, 4rem); letter-spacing: -.052em; }
+      .section-heading,
+      .subset-heading { display: block; }
+      .section-note,
+      .subset-count { display: block; margin-top: 13px; text-align: left; }
+      .rollout-caption { padding: 15px 16px 18px; }
+      .rollout-caption-head { align-items: flex-start; flex-direction: column; gap: 5px; }
+      .caption-text { font-size: .9rem; }
+      .bench-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .bench-section { padding-top: 70px; }
+    }
+
+    @media (max-width: 480px) {
+      .shell { width: calc(100% - 28px); }
+      .nav-links { gap: 8px; font-size: .54rem; letter-spacing: .055em; }
+      .eyebrow { font-size: .62rem; letter-spacing: .12em; }
+      .hero-summary { font-size: .98rem; }
+      .bench-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+      .rollout-card { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner shell">
+      <a class="wordmark" href="#top">PWM</a>
+      <nav class="nav-links" aria-label="Page navigation">
+        <a href="#comparison">Comparison</a>
+        <a href="#bench-title">PWM-Bench</a>
+      </nav>
+    </div>
+  </header>
+
+  <div id="top"></div>
+  <section class="hero shell" aria-labelledby="page-title">
+    <p class="eyebrow">Project demonstrations</p>
+    <h1 id="page-title"><span class="title-accent">PWM:</span> Personalized World Models with Online Reinforcement Learning</h1>
+    <div class="hero-rule"></div>
+    <p class="hero-summary">Comparison rollouts across indoor, outdoor, and gaming environments, showing ground truth and learned world-model predictions side by side.</p>
+  </section>
+
+  <main id="comparison">
+    <section class="comparison-section shell" aria-labelledby="comparison-title">
+      <div class="section-heading">
+        <h2 id="comparison-title">Comparison</h2>
+        <span class="section-note">Three subsets · five rollouts each</span>
+      </div>
+
+      <section class="subset-section" aria-labelledby="indoor-title">
+        <div class="subset-heading">
+          <div><p class="subset-kicker">Subset 01</p><h3 id="indoor-title">Indoor</h3></div>
+          <span class="subset-count">5 comparison videos</span>
+        </div>
+        <div class="rollout-list">
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Indoor comparison it04 s42"><source src="PWM_demo_comparison/indoor/it04_s42_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">it04_s42</span><span class="rollout-scene">Indoor comparison</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W). The camera pans to the right (&rarr;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Indoor comparison yw02 s777"><source src="PWM_demo_comparison/indoor/yw02_s777_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">yw02_s777</span><span class="rollout-scene">Indoor comparison</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Indoor comparison yw04 s123"><source src="PWM_demo_comparison/indoor/yw04_s123_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">yw04_s123</span><span class="rollout-scene">Indoor comparison</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Indoor comparison yw08 s123"><source src="PWM_demo_comparison/indoor/yw08_s123_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">yw08_s123</span><span class="rollout-scene">Indoor comparison</span></div><p class="caption-text">A first-person walking scene in an indoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Indoor comparison yw12 s777"><source src="PWM_demo_comparison/indoor/yw12_s777_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">yw12_s777</span><span class="rollout-scene">Indoor comparison</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="subset-section" aria-labelledby="outdoor-title">
+        <div class="subset-heading">
+          <div><p class="subset-kicker">Subset 02</p><h3 id="outdoor-title">Outdoor</h3></div>
+          <span class="subset-count">5 comparison videos</span>
+        </div>
+        <div class="rollout-list">
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Outdoor comparison nd145 38 s123"><source src="PWM_demo_comparison/outdoor/nd145-38_s123_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">nd145-38_s123</span><span class="rollout-scene">Outdoor comparison</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Outdoor comparison nd145 61 s42"><source src="PWM_demo_comparison/outdoor/nd145-61_s42_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">nd145-61_s42</span><span class="rollout-scene">Outdoor comparison</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective.</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Outdoor comparison nd145 70 s42"><source src="PWM_demo_comparison/outdoor/nd145-70_s42_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">nd145-70_s42</span><span class="rollout-scene">Outdoor comparison</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective.</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Outdoor comparison nd145 73 s42"><source src="PWM_demo_comparison/outdoor/nd145-73_s42_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">nd145-73_s42</span><span class="rollout-scene">Outdoor comparison</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective. The camera pushes forward (W).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Outdoor comparison oadd07 s777"><source src="PWM_demo_comparison/outdoor/oadd07_s777_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">oadd07_s777</span><span class="rollout-scene">Outdoor comparison</span></div><p class="caption-text">A first-person walking scene in an outdoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+        </div>
+      </section>
+
+      <section class="subset-section" aria-labelledby="gaming-title">
+        <div class="subset-heading">
+          <div><p class="subset-kicker">Subset 03</p><h3 id="gaming-title">Gaming</h3></div>
+          <span class="subset-count">5 comparison videos</span>
+        </div>
+        <div class="rollout-list">
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Gaming comparison mcnr63 s42"><source src="PWM_demo_comparison/gaming/mcnr63_s42_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">mcnr63_s42</span><span class="rollout-scene">Gaming comparison</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Gaming comparison mcrl37 s777"><source src="PWM_demo_comparison/gaming/mcrl37_s777_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">mcrl37_s777</span><span class="rollout-scene">Gaming comparison</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward (W). The camera pans to the left (&larr;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Gaming comparison mcrl39 s42"><source src="PWM_demo_comparison/gaming/mcrl39_s42_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">mcrl39_s42</span><span class="rollout-scene">Gaming comparison</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward (W). The camera pans to the left (&larr;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Gaming comparison mcnr06 s777"><source src="PWM_demo_comparison/gaming/mcnr06_s777_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">mcnr06_s777</span><span class="rollout-scene">Gaming comparison</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward and moves left (W+A). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="Gaming comparison mcrl01 s777"><source src="PWM_demo_comparison/gaming/mcrl01_s777_comparison.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">mcrl01_s777</span><span class="rollout-scene">Gaming comparison</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <section class="bench-section" aria-labelledby="bench-title">
+      <div class="shell">
+        <div class="section-heading">
+          <h2 id="bench-title">PWM-Bench</h2>
+          <span class="section-note">4 indoor · 4 outdoor · 4 gaming</span>
+        </div>
+
+        <div class="bench-grid">
+          <div class="bench-row-label">INDOOR</div>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench indoor 1"><source src="bench-video/indoor/indoor1.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Indoor 01</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench indoor 2"><source src="bench-video/indoor/indoor2.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Indoor 02</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench indoor 3"><source src="bench-video/indoor/indoor3.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Indoor 03</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench indoor 4"><source src="bench-video/indoor/indoor4.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Indoor 04</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W).</p></div>
+          </article>
+
+          <div class="bench-row-label">OUTDOOR</div>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench outdoor 1"><source src="bench-video/outdoor/outdoor1.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Outdoor 01</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective.</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench outdoor 2"><source src="bench-video/outdoor/outdoor2.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Outdoor 02</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench outdoor 3"><source src="bench-video/outdoor/outdoor3.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Outdoor 03</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective.</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench outdoor 4"><source src="bench-video/outdoor/outdoor4.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Outdoor 04</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+
+          <div class="bench-row-label">GAMING</div>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench gaming 1"><source src="bench-video/gaming/gaming1.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Gaming 01</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench gaming 2"><source src="bench-video/gaming/gaming2.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Gaming 02</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward and moves left (W+A). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench gaming 3"><source src="bench-video/gaming/gaming3.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Gaming 03</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench gaming 4"><source src="bench-video/gaming/gaming4.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Gaming 04</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="shell">PWM · Personalized World Models with Online Reinforcement Learning</div>
+  </footer>
+
+  <script>
+    document.querySelectorAll('video').forEach((video) => {
+      video.muted = true;
+      video.play().catch(() => {});
+    });
+  </script>
+</body>
+</html>
