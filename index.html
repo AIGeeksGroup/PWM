@@ -15,7 +15,7 @@
       --muted: #756b80;
       --line: #e2d9eb;
       --page: #fcfbfe;
-      --max-width: 1220px;
+      --max-width: 1464px;
       --shadow: 0 14px 34px rgba(75, 38, 116, .08);
     }
 
@@ -55,6 +55,7 @@
     .topbar-inner {
       display: flex;
       min-height: 70px;
+      padding: 10px 0;
       align-items: center;
       justify-content: space-between;
       gap: 24px;
@@ -72,7 +73,10 @@
 
     .nav-links {
       display: flex;
-      gap: 24px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
       color: var(--muted);
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
       font-size: .68rem;
@@ -125,6 +129,104 @@
 
     .title-accent { color: var(--purple); }
 
+    .hero-meta {
+      max-width: 1060px;
+      margin-top: 32px;
+    }
+
+    .hero-authors,
+    .hero-affiliations,
+    .hero-notes {
+      display: flex;
+      flex-wrap: wrap;
+      margin: 0;
+    }
+
+    .hero-authors {
+      gap: 10px 24px;
+      font-size: clamp(1rem, 1.5vw, 1.25rem);
+      font-weight: 600;
+      line-height: 1.6;
+    }
+
+    .hero-authors a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .hero-authors > span,
+    .hero-notes > span { white-space: nowrap; }
+
+    .hero-meta sup {
+      margin-left: 2px;
+      color: var(--purple);
+      font-size: .7em;
+      line-height: 0;
+    }
+
+    .hero-affiliations {
+      gap: 6px 24px;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: .95rem;
+      line-height: 1.6;
+    }
+
+    .hero-notes {
+      gap: 5px 20px;
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: .85rem;
+      line-height: 1.6;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    .project-link {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 20px;
+      border: 1px solid var(--purple);
+      border-radius: 6px;
+      color: var(--purple-dark);
+      background: #fff;
+      font-size: .9rem;
+      font-weight: 650;
+      line-height: 1.4;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: background 160ms ease, color 160ms ease, border-color 160ms ease;
+    }
+
+    .project-link:hover {
+      border-color: var(--purple-dark);
+      color: #fff;
+      background: var(--purple-dark);
+    }
+
+    .project-link:focus-visible {
+      outline: 2px solid var(--purple);
+      outline-offset: 3px;
+    }
+
+    .nav-links .project-link {
+      min-height: 34px;
+      padding: 7px 12px;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+    }
+
+    .nav-links .project-link:hover { color: #fff; }
+
     .hero-rule {
       width: min(100%, 710px);
       height: 1px;
@@ -141,6 +243,45 @@
     }
 
     main { border-top: 1px solid var(--line); }
+
+    #method,
+    #comparison { scroll-margin-top: 112px; }
+
+    .method-section {
+      padding: clamp(64px, 8vw, 96px) 0;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .method-figures {
+      display: grid;
+      /* Match image heights using their original aspect ratios. */
+      grid-template-columns: minmax(0, 1.3322fr) minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .method-figure { min-width: 0; margin: 0; }
+
+    .method-figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .method-figure figcaption {
+      margin-top: 20px;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    .method-figure figcaption strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
 
     .comparison-section { padding: clamp(64px, 8vw, 96px) 0 126px; }
 
@@ -229,7 +370,7 @@
 
     .bench-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 20px 16px;
       align-items: start;
     }
@@ -346,6 +487,10 @@
       text-transform: uppercase;
     }
 
+    @media (max-width: 900px) {
+      .method-figures { grid-template-columns: 1fr; gap: 40px; }
+    }
+
     @media (max-width: 700px) {
       .shell { width: min(var(--max-width), calc(100% - 32px)); }
       .topbar-inner { min-height: 60px; gap: 12px; }
@@ -383,6 +528,11 @@
     <div class="topbar-inner shell">
       <a class="wordmark" href="#top">PWM</a>
       <nav class="nav-links" aria-label="Page navigation">
+        <a class="project-link" href="https://arxiv.org/abs/2610.00000" target="_blank" rel="noopener noreferrer">Paper</a>
+        <a class="project-link" href="https://github.com/AIGeeksGroup/PWM" target="_blank" rel="noopener noreferrer">Code</a>
+        <a class="project-link" href="https://huggingface.co/AIGeeksGroup/PWM" target="_blank" rel="noopener noreferrer">Model</a>
+        <a class="project-link" href="https://huggingface.co/datasets/AIGeeksGroup/PWM-Bench" target="_blank" rel="noopener noreferrer">Benchmark</a>
+        <a href="#method">Method</a>
         <a href="#comparison">Comparison</a>
         <a href="#bench-title">PWM-Bench</a>
       </nav>
@@ -393,12 +543,56 @@
   <section class="hero shell" aria-labelledby="page-title">
     <p class="eyebrow">Project demonstrations</p>
     <h1 id="page-title"><span class="title-accent">PWM:</span> Personalized World Models with Online Reinforcement Learning</h1>
+    <div class="hero-meta">
+      <p class="hero-authors">
+        <span><a href="https://www.linkedin.com/in/zhexin-lou-aa87362b8" target="_blank" rel="noopener noreferrer">Zhexin Lou</a><sup>1*</sup></span>
+        <span><a href="https://github.com/uyhhgki" target="_blank" rel="noopener noreferrer">Guancheng Lu</a><sup>2*</sup></span>
+        <span><a href="https://steve-zeyu-zhang.github.io/" target="_blank" rel="noopener noreferrer">Zeyu Zhang</a><sup>1*†</sup></span>
+        <span><a href="https://zyyyyy123lao.github.io/" target="_blank" rel="noopener noreferrer">Yi Zhang</a><sup>1</sup></span>
+        <span><a href="https://yangyangkiki.github.io/" target="_blank" rel="noopener noreferrer">Yang Zhao</a><sup>3</sup></span>
+        <span><a href="https://ha0tang.github.io/" target="_blank" rel="noopener noreferrer">Hao Tang</a><sup>1‡</sup></span>
+      </p>
+      <p class="hero-affiliations">
+        <span><sup>1</sup> School of Computer Science, Peking University</span>
+        <span><sup>2</sup> Northwestern University</span>
+        <span><sup>3</sup> La Trobe University</span>
+      </p>
+      <p class="hero-notes">
+        <span><sup>*</sup> Equal contribution.</span>
+        <span><sup>†</sup> Project lead.</span>
+        <span><sup>‡</sup> Corresponding author.</span>
+      </p>
+    </div>
+    <div class="hero-actions" aria-label="Project resources">
+      <a class="project-link" href="https://arxiv.org/abs/2610.00000" target="_blank" rel="noopener noreferrer">Paper</a>
+      <a class="project-link" href="https://github.com/AIGeeksGroup/PWM" target="_blank" rel="noopener noreferrer">Code</a>
+      <a class="project-link" href="https://huggingface.co/AIGeeksGroup/PWM" target="_blank" rel="noopener noreferrer">Model</a>
+      <a class="project-link" href="https://huggingface.co/datasets/AIGeeksGroup/PWM-Bench" target="_blank" rel="noopener noreferrer">Benchmark</a>
+    </div>
     <div class="hero-rule"></div>
     <p class="hero-summary">Comparison rollouts across indoor, outdoor, and gaming environments, showing ground truth and learned world-model predictions side by side.</p>
   </section>
 
-  <main id="comparison">
-    <section class="comparison-section shell" aria-labelledby="comparison-title">
+  <main>
+    <section class="method-section" id="method" aria-labelledby="method-title">
+      <div class="shell">
+        <div class="section-heading">
+          <h2 id="method-title">Method</h2>
+        </div>
+        <div class="method-figures">
+          <figure class="method-figure">
+            <img src="images/pwm_teaser_wide.png" width="4200" height="1475" loading="lazy" decoding="async" alt="Scene customization workflow and comparisons of support videos, Yume, and PWM across indoor, outdoor, and gaming scenes.">
+            <figcaption><strong>Scene customization with PWM.</strong> A short support video trains a scene LoRA on a frozen world model. Results use DanceGRPO. Indoor and Outdoor show matched generation times; Gaming shows different steps at similar viewing distances.</figcaption>
+          </figure>
+          <figure class="method-figure">
+            <img src="images/pwm_method.png" width="4200" height="1965" loading="lazy" decoding="async" alt="PWM training and generation workflow using a frozen Yume-5B backbone, a trainable scene LoRA, online rollouts, and DanceGRPO or DiffusionNFT.">
+            <figcaption><strong>PWM with GRPO and DiffusionNFT.</strong> Support video and controls condition fresh rollouts from frozen Yume-5B with a trainable scene LoRA. Rewards guide GRPO's clipped objective with a base-policy anchor, or DiffusionNFT's reward-weighted positive and negative flow-matching branches. Only LoRA parameters are updated. Eight epoch adapters are averaged for generation. Rollout icons are schematic.</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section class="comparison-section shell" id="comparison" aria-labelledby="comparison-title">
       <div class="section-heading">
         <h2 id="comparison-title">Comparison</h2>
         <span class="section-note">Three subsets · five rollouts each</span>
@@ -496,7 +690,7 @@
       <div class="shell">
         <div class="section-heading">
           <h2 id="bench-title">PWM-Bench</h2>
-          <span class="section-note">4 indoor · 4 outdoor · 4 gaming</span>
+          <span class="section-note">5 indoor · 5 outdoor · 5 gaming</span>
         </div>
 
         <div class="bench-grid">
@@ -518,6 +712,11 @@
             <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Indoor 04</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W).</p></div>
           </article>
 
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench indoor 5"><source src="bench-video/indoor/indoor5.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Indoor 05</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an indoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+
           <div class="bench-row-label">OUTDOOR</div>
           <article class="rollout-card">
             <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench outdoor 1"><source src="bench-video/outdoor/outdoor1.mp4" type="video/mp4"></video>
@@ -536,6 +735,11 @@
             <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Outdoor 04</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
           </article>
 
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench outdoor 5"><source src="bench-video/outdoor/outdoor5.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Outdoor 05</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">A first-person walking scene captured from a head-mounted camera in an outdoor environment. First-person perspective. The camera pushes forward (W). The camera pans to the right (&rarr;).</p></div>
+          </article>
+
           <div class="bench-row-label">GAMING</div>
           <article class="rollout-card">
             <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench gaming 1"><source src="bench-video/gaming/gaming1.mp4" type="video/mp4"></video>
@@ -552,6 +756,10 @@
           <article class="rollout-card">
             <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench gaming 4"><source src="bench-video/gaming/gaming4.mp4" type="video/mp4"></video>
             <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Gaming 04</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward (W). The rotation direction of the camera remains stationary (&middot;).</p></div>
+          </article>
+          <article class="rollout-card">
+            <video class="rollout-video" controls autoplay muted loop playsinline preload="metadata" aria-label="PWM-Bench gaming 5"><source src="bench-video/gaming/gaming5.mp4" type="video/mp4"></video>
+            <div class="rollout-caption"><div class="rollout-caption-head"><span class="rollout-label">Gaming 05</span><span class="rollout-scene">PWM-Bench</span></div><p class="caption-text">First-person Minecraft gameplay walking across natural terrain in clear daylight. First-person perspective. The camera pushes forward and moves left (W+A). The rotation direction of the camera remains stationary (&middot;).</p></div>
           </article>
         </div>
       </div>
