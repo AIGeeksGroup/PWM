@@ -18,19 +18,24 @@ def base_args(prepared, scene, weights):
 
 
 def train_command(method, prepared, scene, weights, output):
-    module = "sample_5b_natsom" if method == "rl" else "sample_5b_sft"
+    module = {"rl": "sample_5b_natsom", "sft": "sample_5b_sft", "nft": "sample_5b_nft"}[method]
     cmd = [sys.executable, "-u", "-m", f"fastvideo.sample.{module}"]
     cmd += base_args(prepared, scene, weights)
     cmd += ["--mode", "train", "--split", "train", "--num_chunks", "8", "--group_size", "4",
             "--epochs", "8", "--save_every", "1", "--early_stop_patience", "99",
-            "--early_stop_min_delta", "0.0", "--ppo_epochs", "4", "--kl_coef", "0.1",
-            "--lr", "1e-4", "--beta", "0.5", "--w_gt", "0.50", "--w_lpips", "0.30",
+            "--early_stop_min_delta", "0.0", "--ppo_epochs", "4", "--kl_coef", "0.0" if method == "nft" else "0.1",
+            "--lr", "5e-5" if method == "nft" else "1e-4", "--beta", "0.5", "--w_gt", "0.50", "--w_lpips", "0.30",
             "--w_cross", "0.10", "--w_dyn", "0.1", "--lora_out", str(output),
             "--win_caps", str(prepared / "trainwin_caps.json")]
-    if method == "rl":
+    if method in ("rl", "nft"):
         cmd += ["--score_on_mean", "--native_windows", "--win_starts", "0,9,18,27,36,45"]
     else:
         cmd += ["--sft", "--sft_updates", "192"]
+    if method == "nft":
+        cmd += ["--nft", "--eps_clip", "1e-4", "--unshare_init", "--accum_windows",
+                "--nft_r_mode", "global", "--nft_sigma_mode", "sampler",
+                "--nft_anchor", "0.0", "--nft_ema", "0.0", "--nft_beta", "0.5",
+                "--nft_t_draws", "2", "--nft_zscale", "2.0"]
     return cmd
 
 
@@ -49,7 +54,8 @@ def runtime_env(yume, infer=False):
     env = os.environ.copy()
 
     for name in ("STATIC_MASK", "RSTD_FLOOR", "DETERM", "NATIVE", "KEEP_PX",
-                 "STRICT_DET", "CUBLAS_WORKSPACE_CONFIG", "ALPHA_RAMP", "HIST_NOISE"):
+                 "STRICT_DET", "CUBLAS_WORKSPACE_CONFIG", "ALPHA_RAMP", "HIST_NOISE",
+                 "PWM_SDE_FORM", "PWM_SDE_CLAMP", "DIAG_DIV"):
         env.pop(name, None)
     env.update(PYTHONPATH=os.pathsep.join((str(yume), str(ROOT))),
                PYTHONNOUSERSITE="1", PYTHONUNBUFFERED="1", CLEAN_CAP="1",
@@ -99,7 +105,7 @@ def validate_video(path):
 def main():
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("action", choices=("train", "infer", "evaluate"))
-    p.add_argument("--method", choices=("rl", "sft"), default="rl")
+    p.add_argument("--method", choices=("rl", "sft", "nft"), default="rl")
     p.add_argument("--prepared", type=Path, required=True)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--weights", type=Path, default=ROOT / "weights/Yume-5B-720P")

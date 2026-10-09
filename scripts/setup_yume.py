@@ -8,7 +8,7 @@ import tempfile
 ROOT = Path(__file__).resolve().parents[1]
 REVISION = "111c3fab7fb020d1e261a68be6ec78a3fecc8d5b"
 UPSTREAM = "https://github.com/stdstu12/YUME.git"
-SAMPLES = ("sample_5b.py", "sample_5b_natsom.py", "sample_5b_sft.py", "sample_5b_som.py")
+SAMPLES = ("sample_5b.py", "sample_5b_natsom.py", "sample_5b_sft.py", "sample_5b_som.py", "sample_5b_nft.py")
 
 
 def setup(destination, source_repo=None):
