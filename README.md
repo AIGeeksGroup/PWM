@@ -9,7 +9,7 @@ Official code implementation for:
 >
 > *Equal contribution. †Project lead. ‡Corresponding author.
 
-### [Website](https://aigeeksgroup.github.io/PWM) | [Dataset](https://huggingface.co/datasets/AIGeeksGroup/PWM-Bench) | [Model weights](https://huggingface.co/AIGeeksGroup/PWM)
+### [Website](https://aigeeksgroup.github.io/PWM) | [PWM-Bench](https://huggingface.co/datasets/AIGeeksGroup/PWM-Bench) | [Models](https://huggingface.co/AIGeeksGroup/PWM)
 
 ## Introduction
 
