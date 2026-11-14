@@ -1,5 +1,8 @@
 # PWM: Personalized World Models with Online Reinforcement Learning
 
+Official code implementation for: 
+> **PWM: Personalized World Models with Online Reinforcement Learning**
+> 
 > [Zhexin Lou](https://www.linkedin.com/in/zhexin-lou-aa87362b8)¹*, [Guancheng Lu](https://github.com/uyhhgki)²*, [Zeyu Zhang](https://steve-zeyu-zhang.github.io/)¹*†, [Yi Zhang](https://zyyyyy123lao.github.io/)¹, [Yang Zhao](https://yangyangkiki.github.io/)³, [Hao Tang](https://ha0tang.github.io/)¹‡
 >
 > ¹ School of Computer Science, Peking University · ² Northwestern University · ³ La Trobe University
