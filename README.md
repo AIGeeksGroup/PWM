@@ -8,8 +8,8 @@ Official code implementation for:
 > ¹ School of Computer Science, Peking University · ² Northwestern University · ³ La Trobe University
 >
 > *Equal contribution. †Project lead. ‡Corresponding author.
-
-### [Website](https://aigeeksgroup.github.io/PWM) | [PWM-Bench](https://huggingface.co/datasets/AIGeeksGroup/PWM-Bench) | [Models](https://huggingface.co/AIGeeksGroup/PWM)
+>
+> ### [Paper](https://arxiv.org/abs/2610.04920) | [Website](https://aigeeksgroup.github.io/PWM) | [PWM-Bench](https://huggingface.co/datasets/AIGeeksGroup/PWM-Bench) | [Models](https://huggingface.co/AIGeeksGroup/PWM)
 
 ## Introduction
 
